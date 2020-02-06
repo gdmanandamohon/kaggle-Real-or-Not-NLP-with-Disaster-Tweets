@@ -5,7 +5,7 @@ Created on Sun Jan 05 18:34:32 2020
 
 @author: anandamohonghosh
 """
-
+from gensim.models import Word2Vec
 import pandas as pd
 import numpy as np
 from string import punctuation
@@ -36,8 +36,16 @@ all_text = " ".join(all_reviews)
 all_words = all_text.split()
 
 
-#word Counter and sorting based on their frequency 
+#gensim
+mo = Word2Vec(all_reviews, min_count=1)
 
+
+
+
+
+
+
+#word Counter and sorting based on their frequency 
 count_words = Counter(all_words)
 total_words=len(all_words)
 sorted_words=count_words.most_common(total_words)
@@ -285,17 +293,17 @@ for inputs, labels in test_loader:
     # we'd backprop through the entire training history
     h = tuple([each.data for each in h])
     if(train_on_gpu):
-    inputs, labels = inputs.cuda(), labels.cuda()
-    output, h = net(inputs, h)
-    # calculate loss
-    test_loss = criterion(output.squeeze(), labels.float())
-    test_losses.append(test_loss.item())
-    # convert output probabilities to predicted class (0 or 1)
-    pred = torch.round(output.squeeze())  # rounds to the nearest integer
-    # compare predictions to true label
-    correct_tensor = pred.eq(labels.float().view_as(pred))
-    correct = np.squeeze(correct_tensor.numpy()) if not train_on_gpu else np.squeeze(correct_tensor.cpu().numpy())
-    num_correct += np.sum(correct)
+        inputs, labels = inputs.cuda(), labels.cuda()
+        output, h = net(inputs, h)
+        # calculate loss
+        test_loss = criterion(output.squeeze(), labels.float())
+        test_losses.append(test_loss.item())
+        # convert output probabilities to predicted class (0 or 1)
+        pred = torch.round(output.squeeze())  # rounds to the nearest integer
+        # compare predictions to true label
+        correct_tensor = pred.eq(labels.float().view_as(pred))
+        correct = np.squeeze(correct_tensor.numpy()) if not train_on_gpu else np.squeeze(correct_tensor.cpu().numpy())
+        num_correct += np.sum(correct)
 
 
     # -- stats! -- ##
