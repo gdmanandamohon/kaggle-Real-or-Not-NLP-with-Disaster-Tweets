@@ -100,7 +100,7 @@ def makePadded(encoded_docs):
 
 #Static variables
 MAX_LENGTH =100
-MAX_SENT_LENGTH = 250
+MAX_SENT_LENGTH = 250 
 BATCH_SIZE = 32
 VOCAB_SIZE = 50
 HIDDEN_IN = 128
@@ -143,7 +143,7 @@ for epoch in range(NUM_EPOCS):
         #print(xX.shape, yY.shape)
         dataX = Variable(xX).to(availabelCuda)
         dataY = Variable(yY).to(availabelCuda)
-        outclass = clsf(dataX)
+        outclass = clsf.fit(dataX)
         optimizer.zero_grad()            # clear gradients for this training step
         loss = lossFunc(outclass, dataY)
         loss.backward()                     # backpropagation, compute gradients
@@ -155,34 +155,33 @@ for epoch in range(NUM_EPOCS):
 
 
 
-'''
-from nltk.tokenize import word_tokenize
-#from nltk import sent_tokenize
-import string
-
-sentences = sent_tokenize(X)
-tokens = word_tokenize(X[100])
-words = [word for word in tokens if word.isalpha()]
-tokens = [w.lower() for w in words]
+#Prepare The test data
+xTClean = removepunctuation(XT)
+xTestOneHotEnc = oneHotEncode(xTClean)
+xPadded = makePadded(xTestOneHotEnc)
+feature = torch.LongTensor(xPadded)
+testDataset = utils.TensorDataset(feature)
+dataloaderTrain = utils.DataLoader(testDataset, batch_size=BATCH_SIZE, shuffle=False)
 
 
-table = X[100].maketrans('', '', string.punctuation)
 
-stripped = [w.translate(table) for w in tokens]
-words = [word for word in stripped if word.isalpha()]
-from nltk.corpus import stopwords
-stop_words = set(stopwords.words('english'))
-words = [w for w in words if not w in stop_words]
+output=[]
+#Testig Process
+print('Model Running on CUDA  ', availabelCuda)
+for xX in dataloaderTrain:
+    dataX = Variable(xX).to(availabelCuda)
+    outclass = clsf.predict(dataX)
+    output.append(outclass) #Save every batch in thee list
 
-from nltk.stem.porter import PorterStemmer
-porter = PorterStemmer()
-stemmed = [porter.stem(word) for word in tokens]
 
-from nltk.corpus import stopwords
-stop_words = stopwords.words('english')
-print(stop_words)
 
-'''
+
+
+
+
+
+
+
 
 
 
