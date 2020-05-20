@@ -42,7 +42,7 @@ class Network(nn.Module):
         self.linearLayer = nn.Linear(128, 32)  # equivalent to Dense in keras
         self.dropOut = nn.Dropout(0.2)
         self.linearLayer2 = nn.Linear(32, 1) 
-        #self.reluAct = nn.ReLU()
+        self.reluAct = nn.ReLU()
         self.softAct = nn.Softmax()
         self.logSoftAct = nn.LogSoftmax(dim=1)
         self.sigmoid = nn.Sigmoid()
@@ -51,7 +51,7 @@ class Network(nn.Module):
         clsf = self.embededLayer(x)
         clsf, _ = self.lstmCells(clsf)
         clsf = self.linearLayer(clsf[:,-1,:])
-        clsf = self.reluAct(clsf)
+        #clsf = self.reluAct(clsf)
         clsf = self.linearLayer2(clsf)
         clsf = self.sigmoid(clsf)
         return clsf
